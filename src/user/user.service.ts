@@ -1,7 +1,8 @@
+import { ERRORS } from 'src/common/utils';
 import { CreateUserDto } from './dto/user.create.dto';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
-import { Injectable, HttpException } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
@@ -11,8 +12,10 @@ export class UserService {
     const findUser = await this.userRepository.findByEmail(userDto.email);
 
     if (findUser) {
-      console.log('이미 존재하는 아이디 입니다.');
-      return null;
+      throw new HttpException(
+        ERRORS.USER_ALREADY_EXISTS,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const user = new User(userDto);
