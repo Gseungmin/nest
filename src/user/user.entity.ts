@@ -1,11 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { CreateUserDto } from './dto/user.create.dto';
+import { CommonEntity } from 'src/common/entities/common.entity';
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class User extends CommonEntity {
   @Column()
   email: string;
 
@@ -16,6 +14,7 @@ export class User {
   password: string;
 
   constructor(user?: CreateUserDto) {
+    super();
     if (user) {
       this.email = user.email;
       this.nickname = user.nickname;
