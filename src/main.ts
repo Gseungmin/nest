@@ -10,6 +10,12 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(new ValidationPipe());
+
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
+
   const port = configService.get<number>('PORT');
   await app.listen(port);
 }
