@@ -44,7 +44,9 @@ jobs:
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_REPO }}/nest .
+          docker build -f dockerfile-nginx -t ${{ secrets.DOCKER_REPO }}/nest-nginx .
           docker push ${{ secrets.DOCKER_REPO }}/nest
+          docker push ${{ secrets.DOCKER_REPO }}/nest-nginx
 
       - name: Deploy
         uses: appleboy/ssh-action@v0.1.10
@@ -65,5 +67,6 @@ jobs:
 
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/nest
+            sudo docker pull ${{ secrets.DOCKER_REPO }}/nest-nginx
             docker-compose up -d
             docker image prune -f
