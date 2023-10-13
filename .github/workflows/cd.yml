@@ -26,24 +26,38 @@ jobs:
         run: npm run build
 
       - name: Check active service
-        uses: appleboy/ssh-action@v0.1.10
+        id: check_service
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.HOST }}
           username: ubuntu
           key: ${{ secrets.KEY }}
           script: |
             if docker ps | grep -q blue; then
-              echo "CURRENT_SERVICE=blue" >> $GITHUB_ENV
-              echo "NEW_SERVICE=green" >> $GITHUB_ENV
+                echo "Blue service is active."
+                echo "::set-output name=CURRENT_SERVICE::blue"
+                echo "::set-output name=NEW_SERVICE::green"
             else
-              echo "CURRENT_SERVICE=green" >> $GITHUB_ENV
-              echo "NEW_SERVICE=blue" >> $GITHUB_ENV
+                echo "Green service is active."
+                echo "::set-output name=CURRENT_SERVICE::green"
+                echo "::set-output name=NEW_SERVICE::blue"
             fi
+
+      - name: Set services as env variables
+        run: |
+          echo "CURRENT_SERVICE=${{ steps.check_service.outputs.CURRENT_SERVICE }}" >> $GITHUB_ENV
+          echo "NEW_SERVICE=${{ steps.check_service.outputs.NEW_SERVICE }}" >> $GITHUB_ENV
+
+      - name: Print NEW_SERVICE value
+        run: |
+          echo ${{ env.NEW_SERVICE }}
+          echo ${{ env.CURRENT_SERVICE }}
 
       - name: Adjust Nginx configuration for new service
         run: |
           NGINX_UPSTREAM="${{ env.NEW_SERVICE }}_backend"
           sed -i "s/proxy_pass http:\/\/.*_backend;/proxy_pass http:\/\/$NGINX_UPSTREAM;/" ./nginx/conf.d/nginx.conf
+          cat ./nginx/conf.d/nginx.conf
 
       - name: Docker Build and Push
         run: |
@@ -73,6 +87,7 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_REPO }}/nest
             sudo docker pull ${{ secrets.DOCKER_REPO }}/nest-nginx
             sudo docker-compose up -d ${{ env.NEW_SERVICE }}
-            sudo docker exec nginx nginx -s reload
-            sudo docker-compose rm ${{ env.CURRENT_SERVICE }}
+            sudo docker-compose down nginx
+            sudo docker-compose up -d nginx
+            sudo docker-compose stop ${{ env.CURRENT_SERVICE }}
             docker image prune -f
