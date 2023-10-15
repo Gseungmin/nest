@@ -1,7 +1,15 @@
 import { LoginRequestDto } from 'src/auth/dto/login.request.dto';
 import { CreateUserDto } from './dto/user.create.dto';
 import { UserService } from './user.service';
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { CurrentUser } from 'src/common/decorator/user.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
@@ -32,6 +40,11 @@ export class UserController {
 
   @Post('/login')
   login(@Body() loginDto: LoginRequestDto) {
-    return this.authService.jwtLogin(loginDto);
+    return this.authService.login(loginDto);
+  }
+
+  @Delete()
+  deleteAll() {
+    return this.userService.delete();
   }
 }

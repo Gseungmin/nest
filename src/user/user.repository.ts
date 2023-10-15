@@ -35,4 +35,8 @@ export class UserRepository {
   async remove(id: string): Promise<void> {
     await this.repository.delete(id);
   }
+
+  async delete(): Promise<void> {
+    await this.repository.clear();
+  }
 }

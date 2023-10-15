@@ -42,6 +42,36 @@ export const ERRORS = {
     errorCode: 10006,
     message: '이메일과 비밀번호를 확인해주세요.',
   },
+
+  USER_NOT_FOUND: {
+    statusCode: HttpStatus.UNAUTHORIZED,
+    errorCode: 10007,
+    message: '유저 정보를 조회할 수 없습니다.',
+  },
+
+  TITLE_IS_EMPTY: {
+    statusCode: HttpStatus.BAD_REQUEST,
+    errorCode: 10008,
+    message: '제목을 입력해주세요.',
+  },
+
+  CONTENT_IS_EMPTY: {
+    statusCode: HttpStatus.BAD_REQUEST,
+    errorCode: 10009,
+    message: '내용을 입력해주세요.',
+  },
+
+  POST_NOT_FOUND: {
+    statusCode: HttpStatus.BAD_REQUEST,
+    errorCode: 10010,
+    message: '해당하는 게시물이 존재하지 않습니다.',
+  },
 };
 
 export const SortRound = 10;
+
+export const USER_GRADE = {
+  BASIC: 'BASIC',
+  NORMAL: 'NORMAL',
+  VIP: 'VIP',
+};

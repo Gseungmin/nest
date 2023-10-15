@@ -12,7 +12,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async jwtLogin(data: LoginRequestDto) {
+  async login(data: LoginRequestDto) {
     const { email, password } = data;
 
     const user = await this.repository.findByEmail(email);
@@ -30,7 +30,7 @@ export class AuthService {
       throw new HttpException(ERRORS.LOGIN_FAIL, HttpStatus.UNAUTHORIZED);
     }
 
-    const payload = { email: email, sub: user.id, role: 'BASIC' };
+    const payload = { email: email, sub: user.id, role: user.role };
 
     return {
       token: this.jwtService.sign(payload),

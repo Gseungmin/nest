@@ -1,9 +1,10 @@
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Payload } from './jwt.payload';
 import { UserRepository } from 'src/user/user.repository';
 import { ConfigService } from '@nestjs/config';
+import { ERRORS } from 'src/common/utils';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -25,6 +26,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       return user;
     }
 
-    throw new UnauthorizedException('유저 정보를 조회할 수 없습니다.');
+    throw new HttpException(ERRORS.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
   }
 }

@@ -27,4 +27,8 @@ export class UserService {
   findAll() {
     return this.userRepository.findAll();
   }
+
+  delete() {
+    return this.userRepository.delete();
+  }
 }
