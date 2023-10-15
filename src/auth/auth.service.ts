@@ -1,8 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { LoginRequestDto } from './dto/login.request.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from 'src/user/user.repository';
+import { ERRORS } from 'src/common/utils';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,7 @@ export class AuthService {
     const user = await this.repository.findByEmail(email);
 
     if (!user) {
-      throw new UnauthorizedException('이메일과 비밀번호를 확인해주세요.');
+      throw new HttpException(ERRORS.LOGIN_FAIL, HttpStatus.UNAUTHORIZED);
     }
 
     const isPasswordValidated: Boolean = await bcrypt.compare(
@@ -26,7 +27,7 @@ export class AuthService {
     );
 
     if (!isPasswordValidated) {
-      throw new UnauthorizedException('이메일과 비밀번호를 확인해주세요.');
+      throw new HttpException(ERRORS.LOGIN_FAIL, HttpStatus.UNAUTHORIZED);
     }
 
     const payload = { email: email, sub: user.id, role: 'BASIC' };
