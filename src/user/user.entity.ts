@@ -19,9 +19,7 @@ export class User extends CommonEntity {
   role: string;
 
   @OneToMany(() => Post, (post) => post.user, {
-    cascade: ['remove'],
-    onDelete: 'CASCADE',
-    lazy: true,
+    cascade: true,
   })
   posts: Promise<Post[]>;
 
