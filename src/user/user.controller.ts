@@ -44,7 +44,8 @@ export class UserController {
   }
 
   @Delete()
-  deleteAll() {
-    return this.userService.delete();
+  @UseGuards(JwtAuthGuard)
+  deleteAll(@CurrentUser() user: User) {
+    return this.userService.delete(user);
   }
 }

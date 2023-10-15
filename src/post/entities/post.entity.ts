@@ -11,7 +11,9 @@ export class Post extends CommonEntity {
   @Column({ type: 'varchar', nullable: false })
   title: string;
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.posts, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: User;
 
