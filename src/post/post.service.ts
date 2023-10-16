@@ -1,3 +1,4 @@
+import { AwsService } from 'src/common/aws.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -8,9 +9,24 @@ import { ERRORS } from 'src/common/utils';
 
 @Injectable()
 export class PostService {
-  constructor(private readonly postRepository: PostRepository) {}
+  constructor(
+    private readonly postRepository: PostRepository,
+    private readonly awsService: AwsService,
+  ) {}
 
-  async create(createPostDto: CreatePostDto, user: User) {
+  async create(
+    createPostDto: CreatePostDto,
+    user: User,
+    images: Express.Multer.File[],
+  ) {
+    const uploadedFiles = await Promise.all(
+      images.map((image) => this.awsService.uploadFileToS3('post', image)),
+    );
+
+    const uploadedFileNames = uploadedFiles.map((file) =>
+      this.awsService.getAwsS3FileUrl(file.key),
+    );
+
     const post = new Post(createPostDto);
     await post.setUser(user);
     return await this.postRepository.create(post);

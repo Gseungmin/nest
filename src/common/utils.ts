@@ -66,6 +66,24 @@ export const ERRORS = {
     errorCode: 10010,
     message: '해당하는 게시물이 존재하지 않습니다.',
   },
+
+  IMAGE_IS_EMPTY: {
+    statusCode: HttpStatus.UNAUTHORIZED,
+    errorCode: 10011,
+    message: '이미지를 입력해주세요.',
+  },
+
+  AWS_UPLOAD_FAIL: {
+    statusCode: HttpStatus.BAD_REQUEST,
+    errorCode: 10012,
+    message: '이미지를 AWS에 업로드하는데 실패하였습니다.',
+  },
+
+  AWS_DELETE_FAIL: {
+    statusCode: HttpStatus.BAD_REQUEST,
+    errorCode: 10013,
+    message: '이미지를 AWS에서 삭제하는데 실패하였습니다.',
+  },
 };
 
 export const SortRound = 10;

@@ -1,3 +1,4 @@
+import { ERRORS } from 'src/common/utils';
 import {
   Controller,
   Get,
@@ -7,6 +8,10 @@ import {
   Param,
   Delete,
   UseGuards,
+  UploadedFiles,
+  UseInterceptors,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -14,6 +19,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { CurrentUser } from 'src/common/decorator/user.decorator';
 import { User } from 'src/user/user.entity';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('post')
 export class PostController {
@@ -21,8 +27,17 @@ export class PostController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(@Body() createPostDto: CreatePostDto, @CurrentUser() user: User) {
-    return this.postService.create(createPostDto, user);
+  @UseInterceptors(FilesInterceptor('images', 10))
+  async create(
+    @Body() createPostDto: CreatePostDto,
+    @CurrentUser() user: User,
+    @UploadedFiles() images: Express.Multer.File[],
+  ) {
+    if (!images || images.length === 0) {
+      throw new HttpException(ERRORS.IMAGE_IS_EMPTY, HttpStatus.BAD_REQUEST);
+    }
+
+    return this.postService.create(createPostDto, user, images);
   }
 
   @Get()
