@@ -6,14 +6,15 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   Post,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { CurrentUser } from 'src/common/decorator/user.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { User } from './entities/user.entity';
+import { Response } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -39,8 +40,13 @@ export class UserController {
   }
 
   @Post('/login')
-  login(@Body() loginDto: LoginRequestDto) {
-    return this.authService.login(loginDto);
+  async login(
+    @Body() loginDto: LoginRequestDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const { token } = await this.authService.login(loginDto);
+    response.cookie('jwt', token, { httpOnly: true });
+    return 'Login Success';
   }
 
   @Delete()
