@@ -2,16 +2,18 @@ import { AwsService } from 'src/common/aws.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { User } from 'src/user/user.entity';
+import { User } from 'src/user/entities/user.entity';
 import { Post } from './entities/post.entity';
 import { PostRepository } from './post.repository';
 import { ERRORS } from 'src/common/utils';
-import { PostImage } from './entities/post-image.entity';
+import { PostImage } from 'src/post-image/entities/post-image.entity';
+import { PostImageRepository } from 'src/post-image/post-image.repository';
 
 @Injectable()
 export class PostService {
   constructor(
     private readonly postRepository: PostRepository,
+    private readonly postImageRepository: PostImageRepository,
     private readonly awsService: AwsService,
   ) {}
 
@@ -27,12 +29,15 @@ export class PostService {
     const post = new Post(createPostDto);
     post.setUser(user);
 
-    const postImages: PostImage[] = uploadedFiles.map((file) => {
-      const url = this.awsService.getAwsS3FileUrl(file.key);
-      const image = new PostImage(url);
-      image.setPost(post);
-      return image;
-    });
+    const postImages: PostImage[] = await Promise.all(
+      uploadedFiles.map(async (file) => {
+        const url = this.awsService.getAwsS3FileUrl(file.key);
+        const image = new PostImage(url);
+        image.setPost(post);
+        await this.postImageRepository.create(image);
+        return image;
+      }),
+    );
 
     post.images = Promise.resolve(postImages);
 

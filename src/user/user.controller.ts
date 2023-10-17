@@ -13,7 +13,7 @@ import {
 import { AuthService } from 'src/auth/auth.service';
 import { CurrentUser } from 'src/common/decorator/user.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 
 @Controller('user')
 export class UserController {

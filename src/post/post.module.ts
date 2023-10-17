@@ -5,9 +5,10 @@ import { PostRepository } from './post.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
 import { AwsService } from 'src/common/aws.service';
+import { PostImageModule } from 'src/post-image/post-image.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post])],
+  imports: [TypeOrmModule.forFeature([Post]), PostImageModule],
   controllers: [PostController],
   providers: [PostService, PostRepository, AwsService],
 })

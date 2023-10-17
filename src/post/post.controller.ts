@@ -18,7 +18,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { CurrentUser } from 'src/common/decorator/user.decorator';
-import { User } from 'src/user/user.entity';
+import { User } from 'src/user/entities/user.entity';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('post')

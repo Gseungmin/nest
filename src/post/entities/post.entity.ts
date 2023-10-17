@@ -1,9 +1,8 @@
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { User } from 'src/user/user.entity';
-import { PostImage } from './post-image.entity';
-
+import { User } from 'src/user/entities/user.entity';
+import { PostImage } from 'src/post-image/entities/post-image.entity';
 @Entity()
 export class Post extends CommonEntity {
   @Column({ type: 'varchar', nullable: false })
@@ -31,7 +30,7 @@ export class Post extends CommonEntity {
     }
   }
 
-  async setUser(user: User) {
+  setUser(user: User) {
     this.user = user;
   }
 }

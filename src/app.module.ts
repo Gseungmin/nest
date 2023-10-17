@@ -9,6 +9,7 @@ import { PostModule } from './post/post.module';
 import { LoggerMiddleware } from './common/logger/logger.middleware';
 import { SlackModule } from 'nestjs-slack-webhook';
 import { TimeoutInterceptor } from './common/interceptor/timeout.intercetor';
+import { PostImageModule } from './post-image/post-image.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { TimeoutInterceptor } from './common/interceptor/timeout.intercetor';
     UserModule,
     AuthModule,
     PostModule,
+    PostImageModule,
   ],
   controllers: [AppController],
   providers: [AppService, TimeoutInterceptor],

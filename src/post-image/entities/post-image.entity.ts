@@ -1,6 +1,6 @@
 import { CommonEntity } from 'src/common/entities/common.entity';
+import { Post } from 'src/post/entities/post.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { Post } from './post.entity';
 
 @Entity()
 export class PostImage extends CommonEntity {

@@ -1,8 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { CreateUserDto } from './dto/user.create.dto';
+import { CreateUserDto } from '../dto/user.create.dto';
 import { CommonEntity } from 'src/common/entities/common.entity';
 import { USER_GRADE } from 'src/common/utils';
 import { Post } from 'src/post/entities/post.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User extends CommonEntity {
@@ -13,6 +14,7 @@ export class User extends CommonEntity {
   nickname: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column()

@@ -1,6 +1,6 @@
 import { ERRORS, SortRound } from 'src/common/utils';
 import { CreateUserDto } from './dto/user.create.dto';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 import { UserRepository } from './user.repository';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
