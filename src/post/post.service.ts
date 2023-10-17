@@ -6,6 +6,7 @@ import { User } from 'src/user/user.entity';
 import { Post } from './entities/post.entity';
 import { PostRepository } from './post.repository';
 import { ERRORS } from 'src/common/utils';
+import { PostImage } from './entities/post-image.entity';
 
 @Injectable()
 export class PostService {
@@ -23,12 +24,18 @@ export class PostService {
       images.map((image) => this.awsService.uploadFileToS3('post', image)),
     );
 
-    const uploadedFileNames = uploadedFiles.map((file) =>
-      this.awsService.getAwsS3FileUrl(file.key),
-    );
-
     const post = new Post(createPostDto);
-    await post.setUser(user);
+    post.setUser(user);
+
+    const postImages: PostImage[] = uploadedFiles.map((file) => {
+      const url = this.awsService.getAwsS3FileUrl(file.key);
+      const image = new PostImage(url);
+      image.setPost(post);
+      return image;
+    });
+
+    post.images = Promise.resolve(postImages);
+
     return await this.postRepository.create(post);
   }
 
