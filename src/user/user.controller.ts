@@ -9,12 +9,14 @@ import {
   Post,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from 'src/auth/auth.service';
 import { CurrentUser } from 'src/common/decorator/user.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { User } from './entities/user.entity';
 import { Response } from 'express';
+import { PrivateInterceptor } from 'src/common/interceptor/private.interceptor';
 
 @Controller('user')
 export class UserController {
@@ -30,6 +32,7 @@ export class UserController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(PrivateInterceptor)
   async findUser(@CurrentUser() user: User) {
     return user;
   }
