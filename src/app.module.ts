@@ -7,10 +7,21 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { PostModule } from './post/post.module';
 import { LoggerMiddleware } from './common/logger/logger.middleware';
+import { SlackModule } from 'nestjs-slack-webhook';
+import { TimeoutInterceptor } from './common/interceptor/timeout.intercetor';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    SlackModule.forRootAsync({
+      useFactory: (configService: ConfigService) => {
+        return {
+          type: 'webhook',
+          url: configService.get<string>('WEB_HOOK_URL'),
+        };
+      },
+      inject: [ConfigService],
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -31,7 +42,7 @@ import { LoggerMiddleware } from './common/logger/logger.middleware';
     PostModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, TimeoutInterceptor],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
