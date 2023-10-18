@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Post } from './entities/post.entity';
+import { PostImage } from 'src/post-image/entities/post-image.entity';
 
 @Injectable()
 export class PostRepository {
@@ -10,9 +11,34 @@ export class PostRepository {
     private repository: Repository<Post>,
   ) {}
 
-  async create(post: Partial<Post>): Promise<Post> {
-    const newPost = this.repository.create(post);
-    return await this.repository.save(newPost);
+  async createWithImages(post: Post, images: PostImage[]): Promise<Post> {
+    await this.repository.manager.transaction(
+      async (transactionalEntityManager) => {
+        await transactionalEntityManager.save(Post, post);
+        await transactionalEntityManager.save(PostImage, images);
+      },
+    );
+
+    return post;
+  }
+
+  async create(
+    post: Partial<Post>,
+    postImage: Array<{ post: Post; url: string }>,
+  ): Promise<Post> {
+    const newPost = await this.repository.save(this.repository.create(post));
+
+    for (const image of postImage) {
+      image.post = newPost;
+    }
+
+    await this.repository
+      .createQueryBuilder()
+      .insert()
+      .into(PostImage)
+      .values(postImage)
+      .execute();
+    return newPost;
   }
 
   async findAll(): Promise<Post[]> {

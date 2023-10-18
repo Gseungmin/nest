@@ -15,8 +15,6 @@ export class PrivateInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request: Request = context.switchToHttp().getRequest();
     const user = request.user;
-    const usero = request.user as { role: string };
-    console.log(usero);
     if (user) return next.handle().pipe(map((data) => data));
     else
       throw new HttpException(ERRORS.USER_NOT_FOUND, HttpStatus.UNAUTHORIZED);
